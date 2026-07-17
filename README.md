@@ -2,7 +2,7 @@
 
 Worker .NET de notificações transacionais da plataforma **Conexão Solidária**. Consome eventos Kafka e solicita ao Resend o envio de e-mails baseados em templates hospedados no próprio provedor.
 
-> Microsserviço que compõe o MVP da Conexão Solidária junto a fcs-identity, fcs-donations, fcs-donation-worker, fcs-audit-logs, fcs-bff e fcs-web.
+> Microsserviço que compõe o MVP da Conexão Solidária junto a `fcs-identity`, `fcs-campaign`, `fcs-donations`, `fcs-donation-worker`, `fcs-audit-logs`, `fcs-bff`, `fcs-web` e `fcs-infra`.
 
 ---
 
