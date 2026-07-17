@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fcs-notifications
+  namespace: fcs-notifications
+  labels:
+    app.kubernetes.io/name: fcs-notifications
+    app.kubernetes.io/part-of: fcs
+  annotations:
+    secrets.infisical.com/auto-reload: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: fcs-notifications
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: fcs-notifications
+        app.kubernetes.io/part-of: fcs
+        tags.datadoghq.com/service: fcs-notifications
+        tags.datadoghq.com/env: production
+      annotations:
+        ad.datadoghq.com/worker.checks: |
+          {
+            "openmetrics": {
+              "init_config": {},
+              "instances": [{
+                "openmetrics_endpoint": "http://%%host%%:%%port%%/metrics",
+                "namespace": "fcs_notifications",
+                "metrics": [".*"]
+              }]
+            },
+            "http_check": {
+              "init_config": {},
+              "instances": [{
+                "name": "fcs-notifications-health",
+                "url": "http://%%host%%:%%port%%/health",
+                "timeout": 5
+              }]
+            }
+          }
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/group10-tc-01/fcs-notifications:main
+          ports:
+            - name: http
+              containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: notifications-config
+          env:
+            - name: Resend__ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: notifications-runtime
+                  key: Resend__ApiKey
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          startupProbe:
+            httpGet: { path: /health, port: http }
+            failureThreshold: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: { path: /health, port: http }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /health, port: http }
+            initialDelaySeconds: 30
+            periodSeconds: 20
