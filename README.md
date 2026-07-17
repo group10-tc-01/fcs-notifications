@@ -105,25 +105,6 @@ tests/
 k8s/                                   # Recursos proprietários do worker
 assets/email/                          # Imagens de apoio para os templates do Resend
 ~~~
-
----
-
-## Configuração de e-mail
-
-Os e-mails são mantidos no painel do **Resend**. O worker recebe os IDs dos templates pela configuração abaixo:
-
-| Chave | Uso |
-|---|---|
-| ResendTemplates__DonorWelcomeTemplateId | Boas-vindas ao doador. |
-| ResendTemplates__DonationCreatedTemplateId | Confirmação da criação da doação. |
-| ResendTemplates__DonationProcessedTemplateId | Confirmação do processamento da doação. |
-
-Os templates de doação recebem donation_id e amount como variáveis. Remetente, assunto, conteúdo e elementos visuais ficam centralizados no Resend.
-
-Não versione a API key. Em produção, o InfisicalStaticSecret sincroniza **/platform/resend-api-key** para o Secret Kubernetes **notifications-runtime**, expondo-o ao worker como **Resend__ApiKey**.
-
-O domínio **flaviojcf.com.br** deve estar verificado no Resend com SPF e DKIM, usando o remetente **Conexão Solidária <notificacoes@flaviojcf.com.br>**.
-
 ---
 
 ## Pré-requisitos
