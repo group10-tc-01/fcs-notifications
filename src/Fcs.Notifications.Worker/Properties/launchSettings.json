@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Fcs.Notifications.Worker": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63365;http://localhost:63366"
+    }
+  }
+}

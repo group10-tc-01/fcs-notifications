@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: fcs-notifications-tls
+  namespace: fcs-notifications
+spec:
+  secretName: fcs-notifications-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  dnsNames:
+    - fcs-notifications.flaviojcf.com.br
