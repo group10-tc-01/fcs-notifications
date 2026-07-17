@@ -21,6 +21,23 @@ Documentação completa da arquitetura: [group10-tc-01/fcs-fase05-docs](https://
 
 ---
 
+## Perfis e Roles
+
+O worker não autentica usuários nem aplica RBAC: ele é um componente interno da plataforma e só consome eventos Kafka. A autorização para publicar os eventos permanece nos serviços produtores; o acesso operacional ao pod é controlado pelo Kubernetes.
+
+---
+
+## Endpoints
+
+O worker não expõe endpoints de negócio. Os únicos endpoints públicos são operacionais:
+
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| GET | /health | Operacional | Healthcheck usado pelo K3s e pelo deploy. |
+| GET | /metrics | Operacional | Métricas Prometheus e OpenTelemetry. |
+
+---
+
 ## Contrato de evento
 
 Os produtores — fcs-identity, fcs-donations e fcs-donation-worker — publicam **EmailNotificationRequestedEvent** no tópico **email-notification-requested**.
@@ -49,7 +66,7 @@ Exemplo de evento de doação processada:
 
 ---
 
-## Fluxo de notificação
+### Fluxo principal do worker
 
 ~~~mermaid
 sequenceDiagram
@@ -217,3 +234,22 @@ Configure os secrets no repositório GitHub. O environment production é o gate 
 | Variable | VPS_DEPLOY_USER | Usuário de deploy da VPS. |
 
 No Infisical, crie **resend-api-key** no projeto **fcs-platform-dd-uk**, ambiente **prod**, caminho **/platform**. O Operator sincroniza esse valor para notifications-runtime.
+
+---
+
+## Banco de dados
+
+O fcs-notifications não possui banco de dados. O Kafka mantém a entrega dos eventos e o Resend aceita a chave de idempotência para evitar envios duplicados quando o worker reprocessa uma mensagem.
+
+---
+
+## Como este serviço atende ao hackathon
+
+| Requisito do hackathon | Onde é atendido |
+|---|---|
+| Notificação ao doador | E-mail de boas-vindas e confirmações de doação via Resend. |
+| Integração assíncrona entre microsserviços | Tópico Kafka email-notification-requested. |
+| Confiabilidade no processamento | Commit de offset somente após sucesso e idempotência por eventId. |
+| Endpoint /health e /metrics | Expostos pelo worker e monitorados no K3s. |
+| Imagem Docker e pipeline | Dockerfile e workflows em .github/workflows. |
+| Microsserviço distinto | fcs-notifications separado dos serviços de identidade e doações. |
