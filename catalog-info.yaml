@@ -1,0 +1,22 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: fcs-notifications
+  title: FCS Notifications
+  description: Worker Kafka que envia notificações transacionais aos doadores.
+  annotations:
+    github.com/project-slug: group10-tc-01/fcs-notifications
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-label-selector: app.kubernetes.io/name=fcs-notifications
+    backstage.io/kubernetes-namespace: fcs-notifications
+  links:
+    - title: Datadog
+      url: https://us5.datadoghq.com/metric/explorer?query=service%3Afcs-notifications
+      icon: dashboard
+spec:
+  type: service
+  lifecycle: production
+  owner: group:default/fcs-team
+  system: conexao-solidaria
+  dependsOn:
+    - resource:default/kafka
